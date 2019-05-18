@@ -7,6 +7,7 @@ running = 1
 
 matrix4x4Projection = np.array([[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0],[0.0, 0.0, 1.0, 0.0],[0.0, 0.0, 0.0, 1.0]])
 matrix_rotateZ = np.array([[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0],[0.0, 0.0, 1.0, 0.0],[0.0, 0.0, 0.0, 1.0]])
+matrix_rotateY = np.array([[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0],[0.0, 0.0, 1.0, 0.0],[0.0, 0.0, 0.0, 1.0]])
 matrix_rotateX = np.array([[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0],[0.0, 0.0, 1.0, 0.0],[0.0, 0.0, 0.0, 1.0]])
 
 
@@ -94,136 +95,121 @@ meshCube = mesh()
 #inputV = [ 1.0 ,2.0 ,3.0 ,4.0 ]
 #print(multiplayMatrixVector(inputV,matrix4x4))
 
-def makeTriangle(x0,y0,z0,x1,y1,z1,x2,y2,z2):
-    s_0_1 = vector3d(x0, y0, z0)
-    s_0_2 = vector3d(x1, y1, z1)
-    s_0_3 = vector3d(x2, y2, z2)
-    line0 = [s_0_1,s_0_2,s_0_3]
-    onetriangle = triangle(line0)
-    return onetriangle
 
-
-
-
-
-meshCubetest = []
-
-point_list = []
-with open("teapot.obj") as f:
-    
-    for line in f.readlines():
-        point = [i.rstrip() for i in line.split(' ')]
-        
-        #print(point)
-        
-        if point[0] == 'v':
-            #print(point[1])
-            #print(point[2])
-            #print(point[3])
-            x = vector3d(float(point[1]), float(point[2]), float(point[3]))
-            point_list.append(x)
-        
-        if point[0] == 'f':
-            #print(point[3])
-            print(point_list[int(point[1])-1].x)
-            print(point_list[int(point[1])-1].y)
-            print(point_list[int(point[1])-1].z)
-            print(point_list[int(point[2])-1].x)
-            print(point_list[int(point[2])-1].y)
-            print(point_list[int(point[2])-1].z)
-            print(point_list[int(point[3])-1].x)
-            print(point_list[int(point[3])-1].y)
-            print(point_list[int(point[3])-1].z)
-            oneTriangle = makeTriangle(point_list[int(point[1])-1].x,point_list[int(point[1])-1].y,point_list[int(point[1])-1].z,point_list[int(point[2])-1].x,point_list[int(point[2])-1].y,point_list[int(point[2])-1].z,point_list[int(point[3])-1].x,point_list[int(point[3])-1].y,point_list[int(point[3])-1].z)
-            meshCubetest.append(oneTriangle)
-
-
-
-
-
-pointlist = [ 0.0,0.0,0.0,0.0,1.0,0.0,1.0,1.0,0.0,
-              0.0,0.0,0.0,1.0,1.0,0.0,1.0,0.0,0.0,
-             
-              1.0,0.0,0.0,1.0,1.0,0.0,1.0,1.0,1.0,
-              1.0,0.0,0.0,1.0,1.0,1.0,1.0,0.0,1.0,
-             
-              1.0,0.0,1.0,1.0,1.0,1.0,0.0,1.0,1.0,
-              1.0,0.0,1.0,0.0,1.0,1.0,0.0,0.0,1.0,
-             
-              0.0,0.0,1.0,0.0,1.0,1.0,0.0,1.0,0.0,
-              0.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,0.0,
-             
-              0.0,1.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0,
-              0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.0,
-             
-              1.0,0.0,1.0,0.0,0.0,1.0,0.0,0.0,0.0,
-              1.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,0.0
-             ]
-
-meshCube1 = []
-for i in range(12): # 0 ... 11
-    tempTriangle = makeTriangle(pointlist[i*9+0]+2,pointlist[i*9+1]+2,pointlist[i*9+2]+2,pointlist[i*9+3]+2,pointlist[i*9+4]+2,pointlist[i*9+5]+2,pointlist[i*9+6]+2,pointlist[i*9+7]+2,pointlist[i*9+8]+2)
-    meshCube1.append(tempTriangle)
-
-meshCube3 = []
-for i in range(12): # 0 ... 11
-    tempTriangle = makeTriangle(pointlist[i*9+0]-2,pointlist[i*9+1]-2,pointlist[i*9+2]-2,pointlist[i*9+3]-2,pointlist[i*9+4]-2,pointlist[i*9+5]-2,pointlist[i*9+6]-2,pointlist[i*9+7]-2,pointlist[i*9+8]-2)
-    meshCube3.append(tempTriangle)
-
-
-meshCube4 = []
-for i in range(12): # 0 ... 11
-    tempTriangle = makeTriangle(pointlist[i*9+0]-3,pointlist[i*9+1]-3,pointlist[i*9+2]-3,pointlist[i*9+3]-3,pointlist[i*9+4]-3,pointlist[i*9+5]-3,pointlist[i*9+6]-3,pointlist[i*9+7]-3,pointlist[i*9+8]-3)
-    meshCube4.append(tempTriangle)
 
 #south
-southTriangle1 = makeTriangle(0.0,0.0,0.0,0.0,1.0,0.0,1.0,1.0,0.0)
-southTriangle2 = makeTriangle(0.0,0.0,0.0,1.0,1.0,0.0,1.0,0.0,0.0)
+s_0_1 = vector3d(0.0, 0.0, 0.0)
+s_0_2 = vector3d(0.0, 1.0, 0.0)
+s_0_3 = vector3d(1.0, 1.0, 0.0)
+line0 = [s_0_1,s_0_2,s_0_3]
+southTriangle1 = triangle(line0)
+
+s_1_1 = vector3d(0.0, 0.0, 0.0)
+s_1_2 = vector3d(1.0, 1.0, 0.0)
+s_1_3 = vector3d(1.0, 0.0, 0.0)
+line1 = [s_1_1,s_1_2,s_1_3]
+southTriangle2 = triangle(line1)
 
 
 #east
-eastTriangle1 = makeTriangle(1.0,0.0,0.0,1.0,1.0,0.0,1.0,1.0,1.0)
-eastTriangle2 = makeTriangle(1.0,0.0,0.0,1.0,1.0,1.0,1.0,0.0,1.0)
+s_0_1 = vector3d(1.0, 0.0, 0.0)
+s_0_2 = vector3d(1.0, 1.0, 0.0)
+s_0_3 = vector3d(1.0, 1.0, 1.0)
+line0 = [s_0_1,s_0_2,s_0_3]
+eastTriangle1 = triangle(line0)
+
+s_1_1 = vector3d(1.0, 0.0, 0.0)
+s_1_2 = vector3d(1.0, 1.0, 1.0)
+s_1_3 = vector3d(1.0, 0.0, 1.0)
+line1 = [s_1_1,s_1_2,s_1_3]
+eastTriangle2 = triangle(line1)
 
 #north
-northTriangle1 = makeTriangle(1.0,0.0,1.0,1.0,1.0,1.0,0.0,1.0,1.0)
-northTriangle2 = makeTriangle(1.0,0.0,1.0,0.0,1.0,1.0,0.0,0.0,1.0)
+s_0_1 = vector3d(1.0, 0.0, 1.0)
+s_0_2 = vector3d(1.0, 1.0, 1.0)
+s_0_3 = vector3d(0.0, 1.0, 1.0)
+line0 = [s_0_1,s_0_2,s_0_3]
+northTriangle1 = triangle(line0)
+
+s_1_1 = vector3d(1.0, 0.0, 1.0)
+s_1_2 = vector3d(0.0, 1.0, 1.0)
+s_1_3 = vector3d(0.0, 0.0, 1.0)
+line1 = [s_1_1,s_1_2,s_1_3]
+northTriangle2 = triangle(line1)
 
 #west
-westTriangle1 =  makeTriangle(0.0,0.0,1.0,0.0,1.0,1.0,0.0,1.0,0.0)
-westTriangle2 = makeTriangle(0.0,0.0,1.0,0.0,1.0,0.0,0.0,0.0,0.0)
+s_0_1 = vector3d(0.0, 0.0, 1.0)
+s_0_2 = vector3d(0.0, 1.0, 1.0)
+s_0_3 = vector3d(0.0, 1.0, 0.0)
+line0 = [s_0_1,s_0_2,s_0_3]
+westTriangle1 = triangle(line0)
+
+s_1_1 = vector3d(0.0, 0.0, 1.0)
+s_1_2 = vector3d(0.0, 1.0, 0.0)
+s_1_3 = vector3d(0.0, 0.0, 0.0)
+line1 = [s_1_1,s_1_2,s_1_3]
+westTriangle2 = triangle(line1)
 
 #top
-topTriangle1 = makeTriangle(0.0,1.0,0.0,0.0,1.0,1.0,1.0,1.0,1.0)
-topTriangle2 = makeTriangle(0.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,0.0)
+s_0_1 = vector3d(0.0, 1.0, 0.0)
+s_0_2 = vector3d(0.0, 1.0, 1.0)
+s_0_3 = vector3d(1.0, 1.0, 1.0)
+line0 = [s_0_1,s_0_2,s_0_3]
+topTriangle1 = triangle(line0)
+
+s_1_1 = vector3d(0.0, 1.0, 0.0)
+s_1_2 = vector3d(1.0, 1.0, 1.0)
+s_1_3 = vector3d(1.0, 1.0, 0.0)
+line1 = [s_1_1,s_1_2,s_1_3]
+topTriangle2 = triangle(line1)
 
 #bottom
-bottomTriangle1 = makeTriangle(1.0,0.0,1.0,0.0,0.0,1.0,0.0,0.0,0.0)
-bottomTriangle2 = makeTriangle(1.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0,0.0)
+s_0_1 = vector3d(1.0, 0.0, 1.0)
+s_0_2 = vector3d(0.0, 0.0, 1.0)
+s_0_3 = vector3d(0.0, 0.0, 0.0)
+line0 = [s_0_1,s_0_2,s_0_3]
+bottomTriangle1 = triangle(line0)
+
+s_1_1 = vector3d(1.0, 0.0, 1.0)
+s_1_2 = vector3d(0.0, 0.0, 0.0)
+s_1_3 = vector3d(1.0, 0.0, 0.0)
+line1 = [s_1_1,s_1_2,s_1_3]
+bottomTriangle2 = triangle(line1)
+
+#bottom
+s_0_1 = vector3d(-2.0, 0.0, -1.0)
+s_0_2 = vector3d(0.0, -2.0, -1.0)
+s_0_3 = vector3d(0.0, -2.0, 0.0)
+line0 = [s_0_1,s_0_2,s_0_3]
+new1Triangle1 = triangle(line0)
+
+s_1_1 = vector3d(-1.0, -2.0, 1.0)
+s_1_2 = vector3d(0.0, -2.0, 0.0)
+s_1_3 = vector3d(-1.0, -2.0, 0.0)
+line1 = [s_1_1,s_1_2,s_1_3]
+new1Triangle2 = triangle(line1)
 
 
-meshCube2 = []
-meshCube2.append(southTriangle1)
-meshCube2.append(southTriangle2)
-meshCube2.append(eastTriangle1)
-meshCube2.append(eastTriangle2)
-meshCube2.append(northTriangle1)
-meshCube2.append(northTriangle2)
-meshCube2.append(westTriangle1)
-meshCube2.append(westTriangle2)
-meshCube2.append(topTriangle1)
-meshCube2.append(topTriangle2)
-meshCube2.append(bottomTriangle1)
-meshCube2.append(bottomTriangle2)
-
-meshCube = meshCube1 + meshCube2 + meshCube3 + meshCube4 + meshCubetest
+meshCube = []
 
 
+meshCube.append(southTriangle1)
+meshCube.append(southTriangle2)
 
 
+meshCube.append(eastTriangle1)
+meshCube.append(eastTriangle2)
 
-
-
+meshCube.append(northTriangle1)
+meshCube.append(northTriangle2)
+meshCube.append(westTriangle1)
+meshCube.append(westTriangle2)
+meshCube.append(topTriangle1)
+meshCube.append(topTriangle2)
+meshCube.append(bottomTriangle1)
+meshCube.append(bottomTriangle2)
+meshCube.append(new1Triangle1)
+meshCube.append(new1Triangle2)
 
 import math
 #project matrix
@@ -249,18 +235,11 @@ print(fAspectRatio * fFovRad)
 
 
 theta = 0
-listTriangleProjected = []
-
-def Sort(sub_list):
-    sub_list.sort(key = lambda x: x[0].line1.z + x[0].line2.z + x[0].line3.z, reverse = True)
-    return sub_list
-
-
 
 def Update(elapsedTime):
 
     global theta
-    theta += 50.0 * elapsedTime
+    theta += 1.0 * elapsedTime
     #theta = 30.0
     matrix_rotateZ[0][0] = math.cos( theta )
     matrix_rotateZ[0][1] = math.sin( theta )
@@ -272,14 +251,21 @@ def Update(elapsedTime):
     #print("-------7------")
     #print(matrix_rotateZ)
 
+    matrix_rotateY[0][0] = math.cos( theta * 0.5 )
+    matrix_rotateY[1][1] = 1
+    matrix_rotateY[0][2] = -1 * math.sin( theta * 0.5 )
+    matrix_rotateY[2][0] = math.sin( theta * 0.5 )
+    matrix_rotateY[2][2] = math.cos( theta * 0.5 )
+    matrix_rotateY[3][3] = 1
+    
+    #print("---2.1---")
+    
     matrix_rotateX[0][0] = 1
     matrix_rotateX[1][1] = math.cos( theta * 0.5 )
     matrix_rotateX[1][2] = math.sin( theta * 0.5 )
     matrix_rotateX[2][1] = -1 * math.sin( theta * 0.5 )
     matrix_rotateX[2][2] = math.cos( theta * 0.5 )
     matrix_rotateX[3][3] = 1
-    
-    #print("---2.1---")
     #print(theta)
     for triangles in meshCube:
         #print("---3---")
@@ -302,7 +288,7 @@ def Update(elapsedTime):
         triTranslated = triangle(line1)
         triRotatedZ  = triangle(line1)
         triRotatedZX = triangle(line1)
-        
+        triRotatedZXY = triangle(line1)
         
         # Rotate in Z-Axis
         triRotatedZ.line1 = multiplayMatrixVector(triangles.line1,matrix_rotateZ)
@@ -317,11 +303,15 @@ def Update(elapsedTime):
         triRotatedZX.line3 = multiplayMatrixVector(triRotatedZ.line3,matrix_rotateX)
         #print(triRotatedZX.line1.x)
         
+        triRotatedZXY.line1 = multiplayMatrixVector(triRotatedZX.line1,matrix_rotateY)
+        triRotatedZXY.line2 = multiplayMatrixVector(triRotatedZX.line2,matrix_rotateY)
+        triRotatedZXY.line3 = multiplayMatrixVector(triRotatedZX.line3,matrix_rotateY)
+        
         # Offset into the screen
-        triTranslated = triRotatedZX
-        triTranslated.line1.z = triRotatedZX.line1.z + 10.0
-        triTranslated.line2.z = triRotatedZX.line2.z + 10.0
-       	triTranslated.line3.z = triRotatedZX.line3.z + 10.0
+        triTranslated = triRotatedZXY
+        triTranslated.line1.z = triRotatedZXY.line1.z + 3.0
+        triTranslated.line2.z = triRotatedZXY.line2.z + 3.0
+       	triTranslated.line3.z = triRotatedZXY.line3.z + 3.0
         #print(triTranslated.line1.x)
 
         #print("==============4.0========================")
@@ -389,26 +379,10 @@ def Update(elapsedTime):
 
 		# Rasterize triangle
                 #pygame.draw.polygon(screen,(0, 0, 255),[(triProjected.line1.x, triProjected.line1.y), (triProjected.line2.x, triProjected.line2.y), (triProjected.line3.x, triProjected.line3.y)],True)
-                
-                
-                #if dotProductOflight<0 :
-                #    dotProductOflight =0.001
-                #pygame.draw.polygon(screen,(0, 0, 255*dotProductOflight),[(triProjected.line1.x, triProjected.line1.y), (triProjected.line2.x, triProjected.line2.y), (triProjected.line3.x, triProjected.line3.y)],0)
+
                 if dotProductOflight<0 :
                     dotProductOflight =0.001
-                
-                global listTriangleProjected
-                listTriangleProjected.append([triProjected,dotProductOflight])
-        
-    sortedListofTriangleProjected = Sort(listTriangleProjected)
-#print("===========9============")
-    listTriangleProjected = []
-    for trianglesSorted, dotProductOflightSorted in sortedListofTriangleProjected:
-        #print("============10===========")
-        #print(trianglesSorted.line1.x)
-#print(trianglesSorted.line1.y)
-#print(dotProductOflightSorted)
-        pygame.draw.polygon(screen,(0, 0, 255*dotProductOflightSorted),[(trianglesSorted.line1.x, trianglesSorted.line1.y), (trianglesSorted.line2.x, trianglesSorted.line2.y), (trianglesSorted.line3.x, trianglesSorted.line3.y)],0)
+                pygame.draw.polygon(screen,(0, 0, 255*dotProductOflight),[(triProjected.line1.x, triProjected.line1.y), (triProjected.line2.x, triProjected.line2.y), (triProjected.line3.x, triProjected.line3.y)],0)
 
 
 		#input("Press Enter to continue...")

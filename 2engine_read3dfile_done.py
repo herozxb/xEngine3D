@@ -104,43 +104,6 @@ def makeTriangle(x0,y0,z0,x1,y1,z1,x2,y2,z2):
 
 
 
-
-
-meshCubetest = []
-
-point_list = []
-with open("teapot.obj") as f:
-    
-    for line in f.readlines():
-        point = [i.rstrip() for i in line.split(' ')]
-        
-        #print(point)
-        
-        if point[0] == 'v':
-            #print(point[1])
-            #print(point[2])
-            #print(point[3])
-            x = vector3d(float(point[1]), float(point[2]), float(point[3]))
-            point_list.append(x)
-        
-        if point[0] == 'f':
-            #print(point[3])
-            print(point_list[int(point[1])-1].x)
-            print(point_list[int(point[1])-1].y)
-            print(point_list[int(point[1])-1].z)
-            print(point_list[int(point[2])-1].x)
-            print(point_list[int(point[2])-1].y)
-            print(point_list[int(point[2])-1].z)
-            print(point_list[int(point[3])-1].x)
-            print(point_list[int(point[3])-1].y)
-            print(point_list[int(point[3])-1].z)
-            oneTriangle = makeTriangle(point_list[int(point[1])-1].x,point_list[int(point[1])-1].y,point_list[int(point[1])-1].z,point_list[int(point[2])-1].x,point_list[int(point[2])-1].y,point_list[int(point[2])-1].z,point_list[int(point[3])-1].x,point_list[int(point[3])-1].y,point_list[int(point[3])-1].z)
-            meshCubetest.append(oneTriangle)
-
-
-
-
-
 pointlist = [ 0.0,0.0,0.0,0.0,1.0,0.0,1.0,1.0,0.0,
               0.0,0.0,0.0,1.0,1.0,0.0,1.0,0.0,0.0,
              
@@ -216,7 +179,41 @@ meshCube2.append(topTriangle2)
 meshCube2.append(bottomTriangle1)
 meshCube2.append(bottomTriangle2)
 
-meshCube = meshCube1 + meshCube2 + meshCube3 + meshCube4 + meshCubetest
+meshCube = meshCube1 + meshCube2 + meshCube3 + meshCube4
+
+
+
+meshCubetest = []
+
+point_list = []
+with open("num.obj") as f:
+    
+    for line in f.readlines():
+        point = [i.rstrip() for i in line.split(' ')]
+        
+        #print(point)
+        
+        if point[0] == 'v':
+            #print(point[1])
+            #print(point[2])
+            #print(point[3])
+            x = vector3d(float(point[1]), float(point[2]), float(point[3]))
+            point_list.append(x)
+        
+        if point[0] == 'f':
+            #print(point[3])
+            print(point_list[int(point[1])-1].x)
+            print(point_list[int(point[1])-1].y)
+            print(point_list[int(point[1])-1].z)
+            print(point_list[int(point[2])-1].x)
+            print(point_list[int(point[2])-1].y)
+            print(point_list[int(point[2])-1].z)
+            print(point_list[int(point[3])-1].x)
+            print(point_list[int(point[3])-1].y)
+            print(point_list[int(point[3])-1].z)
+            oneTriangle = makeTriangle(point_list[int(point[1])-1].x,point_list[int(point[1])-1].y,point_list[int(point[1])-1].z,point_list[int(point[2])-1].x,point_list[int(point[2])-1].y,point_list[int(point[2])-1].z,point_list[int(point[3])-1].x,point_list[int(point[3])-1].y,point_list[int(point[3])-1].z)
+            meshCubetest.append(oneTriangle)
+
 
 
 
@@ -260,7 +257,7 @@ def Sort(sub_list):
 def Update(elapsedTime):
 
     global theta
-    theta += 50.0 * elapsedTime
+    theta += 1.0 * elapsedTime
     #theta = 30.0
     matrix_rotateZ[0][0] = math.cos( theta )
     matrix_rotateZ[0][1] = math.sin( theta )
@@ -281,7 +278,7 @@ def Update(elapsedTime):
     
     #print("---2.1---")
     #print(theta)
-    for triangles in meshCube:
+    for triangles in meshCubetest:
         #print("---3---")
 
         #print(triangles.line1.x)
@@ -319,9 +316,9 @@ def Update(elapsedTime):
         
         # Offset into the screen
         triTranslated = triRotatedZX
-        triTranslated.line1.z = triRotatedZX.line1.z + 10.0
-        triTranslated.line2.z = triRotatedZX.line2.z + 10.0
-       	triTranslated.line3.z = triRotatedZX.line3.z + 10.0
+        triTranslated.line1.z = triRotatedZX.line1.z + 15.0
+        triTranslated.line2.z = triRotatedZX.line2.z + 15.0
+       	triTranslated.line3.z = triRotatedZX.line3.z + 15.0
         #print(triTranslated.line1.x)
 
         #print("==============4.0========================")
