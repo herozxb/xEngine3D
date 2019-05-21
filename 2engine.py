@@ -249,6 +249,15 @@ def vector_minus_vector(vector1,vector2):
 
     return vector
 
+def vector_add_vector(vector1,vector2):
+    
+    vector = vector3d(0.1, 0.1,0.1)
+    vector.x = vector1.x + vector2.x
+    vector.y = vector1.y + vector2.y
+    vector.z = vector1.z + vector2.z
+    
+    return vector
+
 def vector_cross_product(vector_x,vector_y):
     vector_z = vector3d(0.1, 0.1,0.1)
     vector_z.x = vector_x.y * vector_y.z - vector_x.z * vector_y.y
@@ -260,10 +269,15 @@ def vector_cross_product(vector_x,vector_y):
 def vector_normal_make(normal):
 
     length = math.sqrt( normal.x * normal.x + normal.y * normal.y + normal.z * normal.z )
+    if length == 0:
+        length = 0.01
+
     normal.x /= length
     normal.y /= length
     normal.z /= length
 
+
+    
     return normal
 
 def vector_dotProduct(vector1,vector2):
@@ -342,9 +356,13 @@ def matrix_quike_inverse(m):
     return matrix4x4
 
 vectorCamera = vector3d(0.0, 0.0,0.0)
-
+vectorLookDirection = vector3d(0.0,0.0,1.0)
 def Update(elapsedTime):
-
+    
+    global vectorLookDirection
+    global vectorCamera
+    vForward = multiply_each_vector_by_number(vectorLookDirection, 8.0 * elapsedTime,8.0 * elapsedTime,8.0 * elapsedTime);
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -359,9 +377,24 @@ def Update(elapsedTime):
 
             if(event.key == pygame.K_UP):
                 print("---3---")
-                vectorCamera.y -= 8.0 * elapsedTime
+                vectorCamera.y += 8.0 * elapsedTime
             if(event.key == pygame.K_DOWN):
                 print("---4---")
+                vectorCamera.y -= 8.0 * elapsedTime
+                    
+                    
+            if(event.key == pygame.K_a):
+                print("---5---")
+                vectorCamera = vector_add_vector(vectorCamera,vForward)
+            if(event.key == pygame.K_d):
+                print("---6---")
+                vectorCamera = vector_minus_vector(vectorCamera,vForward)
+
+            if(event.key == pygame.K_w):
+                print("---7---")
+                vectorCamera.y -= 8.0 * elapsedTime
+            if(event.key == pygame.K_s):
+                print("---8---")
                 vectorCamera.y += 8.0 * elapsedTime
                     
                     
@@ -406,9 +439,9 @@ def Update(elapsedTime):
         normal = vector_normal_make(normal)
         
 
-        vectorLookDirection = vector3d(0.0,0.0,1.0)
         
-        vectorLookDirection = multiply_each_vector_by_number(vectorLookDirection,-1,-1,-1)
+        
+        #vectorLookDirection = multiply_each_vector_by_number(vectorLookDirection,-1,-1,-1)
         
         vectorUp = vector3d(0.0,1.0,0.0)
         vectorTarget = vector_minus_vector(vectorCamera,vectorLookDirection)
@@ -464,15 +497,16 @@ def Update(elapsedTime):
     for trianglesSorted, dotProductOflightSorted in sortedListofTriangleProjected:
         pygame.draw.polygon(screen,(0, 0, 255*dotProductOflightSorted),[(trianglesSorted.line1.x, trianglesSorted.line1.y), (trianglesSorted.line2.x, trianglesSorted.line2.y), (trianglesSorted.line3.x, trianglesSorted.line3.y)],0)
 
+    pygame.display.flip()
 
 
 import time
 while running:
-    event = pygame.event.poll()
-    if event.type == pygame.QUIT:
-        running = 0
+    #event = pygame.event.poll()
+    #if event.type == pygame.QUIT:
+    #    running = 0
     screen.fill((0, 0, 0))
 #time.sleep(0.001)
     Update(0.1)
-    pygame.display.flip()
+#pygame.display.flip()
 
