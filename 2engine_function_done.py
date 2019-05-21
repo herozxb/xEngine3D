@@ -2,17 +2,13 @@
 import pygame
 import numpy as np
 
-
-
-
 screen = pygame.display.set_mode((640, 480))
 running = 1
 
 matrix4x4Projection = np.array([[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0],[0.0, 0.0, 1.0, 0.0],[0.0, 0.0, 0.0, 1.0]])
 matrix_rotateZ = np.array([[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0],[0.0, 0.0, 1.0, 0.0],[0.0, 0.0, 0.0, 1.0]])
 matrix_rotateX = np.array([[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0],[0.0, 0.0, 1.0, 0.0],[0.0, 0.0, 0.0, 1.0]])
-matrix_camera = np.array([[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0],[0.0, 0.0, 1.0, 0.0],[0.0, 0.0, 0.0, 1.0]])
-matrix_view = np.array([[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0],[0.0, 0.0, 1.0, 0.0],[0.0, 0.0, 0.0, 1.0]])
+
 
 
 def multiplayMatrixVector(inputV,matrix4x4):
@@ -21,11 +17,21 @@ def multiplayMatrixVector(inputV,matrix4x4):
     outputV.y = inputV.x * matrix4x4[0][1] + inputV.y * matrix4x4[1][1] + inputV.z * matrix4x4[2][1]  + matrix4x4[3][1]
     outputV.z = inputV.x * matrix4x4[0][2] + inputV.y * matrix4x4[1][2] + inputV.z * matrix4x4[2][2]  + matrix4x4[3][2]
     w = inputV.x * matrix4x4[0][3] + inputV.y * matrix4x4[1][3] + inputV.z * matrix4x4[2][3]  + matrix4x4[3][3]
-
+    #print("==============3.0========================")
+    #print(outputV.x )
+    #print(outputV.y )
+    #print(outputV.z )
+    #print(w )
+    
     if w != 0.0:
         outputV.x = outputV.x / w
         outputV.y = outputV.y / w
         outputV.z = outputV.z / w
+        #print("==============3.1========================")
+        #print(outputV.x )
+        #print(outputV.y )
+        #print(outputV.z )
+        #print(w )
     return outputV
 
 class vector3d(object):
@@ -37,16 +43,27 @@ class vector3d(object):
         return [self.x, self.y, self.z]
 
 
+x = vector3d(21, 20,19)
+assert x.x == 21
+print(x.x)
+
 class triangle(object):
     def __init__(self, lines):
         self.line1 = lines[0]
         self.line2 = lines[1]
         self.line3 = lines[2]
-
 x1 = vector3d(21, 20,19)
 x2 = vector3d(21, 20,19)
 x3 = vector3d(21, 20,19)
 line1 = [x1,x2,x3]
+
+t1 = triangle(line1)
+
+
+print("========1============")
+print(t1.line1)
+
+t2 = multiplayMatrixVector(t1.line1,matrix4x4Projection)
 
 class mesh(list):
     
@@ -56,6 +73,18 @@ class mesh(list):
         return self.__getattribute__(key)
     def __setitem__(self, key, value):
         self.__setattr__(key, value)
+    
+    
+    #    def add_triangle(self, triangle):
+    #    self.append(triangle)
+
+    #def count_in_list(n):
+#    return mesh[n]
+
+m = mesh()
+m["1"] = t1
+print("----1---")
+print(m["1"].line1.x)
 
 meshCube = mesh()
 
@@ -79,25 +108,36 @@ def makeTriangle(x0,y0,z0,x1,y1,z1,x2,y2,z2):
 
 meshCubetest = []
 
-def make_mesh_from_file(strings):
-    meshCube = []
-    point_list = []
-    with open(strings) as f:
+point_list = []
+with open("teapot.obj") as f:
     
-        for line in f.readlines():
-            point = [i.rstrip() for i in line.split(' ')]
-  
-            if point[0] == 'v':
-                x = vector3d(float(point[1]), float(point[2]), float(point[3]))
-                point_list.append(x)
+    for line in f.readlines():
+        point = [i.rstrip() for i in line.split(' ')]
         
-            if point[0] == 'f':
-                oneTriangle = makeTriangle(point_list[int(point[1])-1].x,point_list[int(point[1])-1].y,point_list[int(point[1])-1].z,point_list[int(point[2])-1].x,point_list[int(point[2])-1].y,point_list[int(point[2])-1].z,point_list[int(point[3])-1].x,point_list[int(point[3])-1].y,point_list[int(point[3])-1].z)
-                meshCube.append(oneTriangle)
-    return meshCube
+        #print(point)
+        
+        if point[0] == 'v':
+            #print(point[1])
+            #print(point[2])
+            #print(point[3])
+            x = vector3d(float(point[1]), float(point[2]), float(point[3]))
+            point_list.append(x)
+        
+        if point[0] == 'f':
+            #print(point[3])
+            print(point_list[int(point[1])-1].x)
+            print(point_list[int(point[1])-1].y)
+            print(point_list[int(point[1])-1].z)
+            print(point_list[int(point[2])-1].x)
+            print(point_list[int(point[2])-1].y)
+            print(point_list[int(point[2])-1].z)
+            print(point_list[int(point[3])-1].x)
+            print(point_list[int(point[3])-1].y)
+            print(point_list[int(point[3])-1].z)
+            oneTriangle = makeTriangle(point_list[int(point[1])-1].x,point_list[int(point[1])-1].y,point_list[int(point[1])-1].z,point_list[int(point[2])-1].x,point_list[int(point[2])-1].y,point_list[int(point[2])-1].z,point_list[int(point[3])-1].x,point_list[int(point[3])-1].y,point_list[int(point[3])-1].z)
+            meshCubetest.append(oneTriangle)
 
 
-meshCubetest = make_mesh_from_file("teapot.obj")
 
 
 
@@ -176,7 +216,14 @@ meshCube2.append(topTriangle2)
 meshCube2.append(bottomTriangle1)
 meshCube2.append(bottomTriangle2)
 
-meshCube = meshCube1 + meshCube2 + meshCube3 + meshCube4#+ meshCubetest
+meshCube = meshCube1 + meshCube2 + meshCube3 + meshCube4 + meshCubetest
+
+
+
+
+
+
+
 
 import math
 #project matrix
@@ -194,12 +241,21 @@ matrix4x4Projection[2][3] = 1.0
 matrix4x4Projection[3][3] = 0.0
 
 
+print("----2---")
+print(matrix4x4Projection)
+print(fAspectRatio)
+print(fFovRad)
+print(fAspectRatio * fFovRad)
+
+
 theta = 0
 listTriangleProjected = []
 
 def Sort(sub_list):
     sub_list.sort(key = lambda x: x[0].line1.z + x[0].line2.z + x[0].line3.z, reverse = True)
     return sub_list
+
+
 
 def matirx_rotate_Z(theta):
 
@@ -214,6 +270,7 @@ def matirx_rotate_Z(theta):
 
 def matirx_rotate_X(theta):
     
+
     matrix_rotateX[0][0] = 1
     matrix_rotateX[1][1] = math.cos( theta * 0.5 )
     matrix_rotateX[1][2] = math.sin( theta * 0.5 )
@@ -225,18 +282,9 @@ def matirx_rotate_X(theta):
 
 
 def add_each_vector_by_number(vector,x,y,z):
-
     vector.line1.z = vector.line1.z + x
     vector.line2.z = vector.line2.z + y
     vector.line3.z = vector.line3.z + z
-    
-    return vector
-
-def multiply_each_vector_by_number(vector,x,y,z):
-    
-    vector.x = vector.x * x
-    vector.y = vector.y * y
-    vector.z = vector.z * z
     
     return vector
 
@@ -272,112 +320,36 @@ def vector_dotProduct(vector1,vector2):
     
     return dotProduct
 
-def matrix_point_at(position_vector,target_vector,up_vector):
-    forward_vector = vector3d(0.1,0.1,0.1)
-    forward_vector = vector_minus_vector(target_vector , position_vector)
-    forward_vector = vector_normal_make(forward_vector)
-
-    a = vector3d(0.1,0.1,0.1)
-    a.x = forward_vector.x * vector_dotProduct(up_vector,forward_vector)
-    a.y = forward_vector.y * vector_dotProduct(up_vector,forward_vector)
-    a.z = forward_vector.z * vector_dotProduct(up_vector,forward_vector)
-    
-    new_up_vector = vector3d(0.1,0.1,0.1)
-    new_up_vector = vector_minus_vector(up_vector,a)
-    new_up_vector = vector_normal_make(new_up_vector)
-
-    new_right_vector = vector3d(0.1,0.1,0.1)
-    new_right_vector = vector_cross_product(new_up_vector,forward_vector)
-
-
-    matrix4x4 = np.array([[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0],[0.0, 0.0, 1.0, 0.0],[0.0, 0.0, 0.0, 1.0]])
-
-
-    matrix4x4[0][0] = new_right_vector.x
-    matrix4x4[1][0] = new_up_vector.x
-    matrix4x4[2][0] = forward_vector.x
-    matrix4x4[3][0] = position_vector.x
-    matrix4x4[0][1] = new_right_vector.y
-    matrix4x4[1][1] = new_up_vector.y
-    matrix4x4[2][1] = forward_vector.y
-    matrix4x4[3][1] = position_vector.y
-    matrix4x4[0][2] = new_right_vector.z
-    matrix4x4[1][2] = new_up_vector.z
-    matrix4x4[2][2] = forward_vector.z
-    matrix4x4[3][2] = position_vector.z
-    matrix4x4[0][3] = 0.0
-    matrix4x4[1][3] = 0.0
-    matrix4x4[2][3] = 0.0
-    matrix4x4[3][3] = 1.0
-
-    return matrix4x4
-
-def matrix_quike_inverse(m):
-    matrix4x4 = np.array([[0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0],[0.0, 0.0, 0.0, 0.0]])
-
-
-    matrix4x4[0][0] = m[0][0]
-    matrix4x4[1][0] = m[0][1]
-    matrix4x4[2][0] = m[0][2]
-
-    matrix4x4[0][1] = m[1][0]
-    matrix4x4[1][1] = m[1][1]
-    matrix4x4[2][1] = m[1][2]
-
-    matrix4x4[0][2] = m[2][0]
-    matrix4x4[1][2] = m[2][1]
-    matrix4x4[2][2] = m[2][2]
-    
-    matrix4x4[0][3] = 0.0
-    matrix4x4[1][3] = 0.0
-    matrix4x4[2][3] = 0.0
-    
-    matrix4x4[3][0] = -1*(m[3][0] * matrix4x4[0][0] + m[3][1] * matrix4x4[1][0] + m[3][2] * matrix4x4[2][0])
-    matrix4x4[3][1] = -1*(m[3][0] * matrix4x4[0][1] + m[3][1] * matrix4x4[1][1] + m[3][2] * matrix4x4[2][1])
-    matrix4x4[3][2] = -1*(m[3][0] * matrix4x4[0][2] + m[3][1] * matrix4x4[1][2] + m[3][2] * matrix4x4[2][2]);
-
-
-    matrix4x4[3][3] = 1.0
-    
-    return matrix4x4
-
-vectorCamera = vector3d(0.0, 0.0,0.0)
-
 def Update(elapsedTime):
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        elif event.type == pygame.KEYDOWN:
-            if(event.key == pygame.K_RIGHT):
-                print("---1---")
-                vectorCamera.x += 8.0 * elapsedTime
-            if(event.key == pygame.K_LEFT):
-                print("---2---")
-                vectorCamera.x -= 8.0 * elapsedTime
-
-            if(event.key == pygame.K_UP):
-                print("---3---")
-                vectorCamera.y -= 8.0 * elapsedTime
-            if(event.key == pygame.K_DOWN):
-                print("---4---")
-                vectorCamera.y += 8.0 * elapsedTime
-                    
-                    
     global theta
-    theta += 0.1 * elapsedTime
+    theta += 5.0 * elapsedTime
 
     Matirx_Rotate_X = matirx_rotate_X(theta)
     Matirx_Rotate_Z = matirx_rotate_Z(theta)
     
     for triangles in meshCube:
- 
+        #print("---3---")
+
+        #print(triangles.line1.x)
+        #print(triangles.line1.y)
+        #print(triangles.line1.z)
+        #print(triangles.line2.x)
+        #print(triangles.line2.y)
+        #print(triangles.line2.z)
+        #print(triangles.line3.x)
+        #print(triangles.line3.y)
+        #print(triangles.line3.z)
+
+        #triangle triProjected
+        #triangle triTranslated
+        #triangle triRotatedZ
+        #triangle triRotatedZX
         triProjected  = triangle(line1)
         triTranslated = triangle(line1)
         triRotatedZ  = triangle(line1)
         triRotatedZX = triangle(line1)
-        triViewed = triangle(line1)
+        
         
         # Rotate in Z-Axis
         triRotatedZ.line1 = multiplayMatrixVector(triangles.line1,Matirx_Rotate_Z)
@@ -394,52 +366,69 @@ def Update(elapsedTime):
         
         # Offset into the screen
         triTranslated = add_each_vector_by_number(triRotatedZX,10,10,10)
+        #triTranslated.line1.z = triRotatedZX.line1.z + 10.0
+        #triTranslated.line2.z = triRotatedZX.line2.z + 10.0
+        #triTranslated.line3.z = triRotatedZX.line3.z + 10.0
+        #print(triTranslated.line1.x)
+
+        #print("==============4.0========================")
+
+	    # norm of the surface
         
         normal = vector3d(0.1, 0.1,0.1)
         vectorline1 = vector3d(0.1, 0.1,0.1)
         vectorline2 = vector3d(0.1, 0.1,0.1)
 
         vectorline1 = vector_minus_vector(triTranslated.line2,triTranslated.line1)
+        #vectorline1.x = triTranslated.line2.x - triTranslated.line1.x
+        #vectorline1.y = triTranslated.line2.y - triTranslated.line1.y
+        #vectorline1.z = triTranslated.line2.z - triTranslated.line1.z
+
         vectorline2 = vector_minus_vector(triTranslated.line3,triTranslated.line1)
+        #vectorline2.x = triTranslated.line3.x - triTranslated.line1.x
+        #vectorline2.y = triTranslated.line3.y - triTranslated.line1.y
+        #vectorline2.z = triTranslated.line3.z - triTranslated.line1.z
 
         normal = vector_cross_product(vectorline1,vectorline2)
+        #normal.x = vectorline1.y * vectorline2.z - vectorline1.z * vectorline2.y
+        #normal.y = vectorline1.z * vectorline2.x - vectorline1.x * vectorline2.z
+        #normal.z = vectorline1.x * vectorline2.y - vectorline1.y * vectorline2.x
+        
+        #length = math.sqrt( normal.x * normal.x + normal.y * normal.y + normal.z * normal.z )
+        #normal.x /= length
+        #normal.y /= length
+        #normal.z /= length
+
         normal = vector_normal_make(normal)
         
-
-        vectorLookDirection = vector3d(0.0,0.0,1.0)
-        
-        vectorLookDirection = multiply_each_vector_by_number(vectorLookDirection,-1,-1,-1)
-        
-        vectorUp = vector3d(0.0,1.0,0.0)
-        vectorTarget = vector_minus_vector(vectorCamera,vectorLookDirection)
-        
-        matrix_camera = matrix_point_at(vectorCamera,vectorTarget,vectorUp)
-        
-        matrix_view = matrix_quike_inverse(matrix_camera)
-
-
-
-
+        vectorCamera = vector3d(0.1, 0.1,0.1)
         dotProductOfVectors = vector_dotProduct(normal,vector_minus_vector(triTranslated.line1,vectorCamera) )
+        #dotProductOfVectors = normal.x * (triTranslated.line1.x - vectorCamera.x) + normal.y * (triTranslated.line1.y - vectorCamera.y) + normal.z * (triTranslated.line1.z - vectorCamera.z)
 
         if dotProductOfVectors < 0 :
 		
                 lightdirection = vector3d(0.0, 0.0,-1.0)
+                #length = math.sqrt( lightdirection.x * lightdirection.x + lightdirection.y * lightdirection.y + lightdirection.z * lightdirection.z )
+                #lightdirection.x /= length
+                #lightdirection.y /= length
+                #lightdirection.z /= length
                 
                 lightdirection = vector_normal_make(lightdirection)
 
                 dotProductOflight = vector_dotProduct(normal,lightdirection)
+                #dotProductOflight = normal.x * lightdirection.x + normal.y * lightdirection.y  + normal.z * lightdirection.z
+
+                print("==========8===============")
+                print(dotProductOflight)
+
 		#Project triangles from 3D --> 2D
-        
-        
-                triViewed.line1 = multiplayMatrixVector(triTranslated.line1,matrix_view)
-                triViewed.line2 = multiplayMatrixVector(triTranslated.line2,matrix_view)
-                triViewed.line3 = multiplayMatrixVector(triTranslated.line3,matrix_view)
-        
-        
-                triProjected.line1 = multiplayMatrixVector(triViewed.line1,matrix4x4Projection)
-                triProjected.line2 = multiplayMatrixVector(triViewed.line2,matrix4x4Projection)
-                triProjected.line3 = multiplayMatrixVector(triViewed.line3,matrix4x4Projection)
+                triProjected.line1 = multiplayMatrixVector(triTranslated.line1,matrix4x4Projection)
+                triProjected.line2 = multiplayMatrixVector(triTranslated.line2,matrix4x4Projection)
+                triProjected.line3 = multiplayMatrixVector(triTranslated.line3,matrix4x4Projection)
+		#print(triProjected.line1.x)
+		#print(triProjected.line1.y)
+		#print(triProjected.line1.z)
+		#Scale into view
 
                 triProjected.line1.x += 1.0
                 triProjected.line1.y += 1.0
@@ -447,11 +436,21 @@ def Update(elapsedTime):
                 triProjected.line2.y += 1.0
                 triProjected.line3.x += 1.0
                 triProjected.line3.y += 1.0
-                multiply_each_vector_by_number(triProjected.line1,0.5*640.0,0.5*480.0,1)
-                multiply_each_vector_by_number(triProjected.line2,0.5*640.0,0.5*480.0,1)
-                multiply_each_vector_by_number(triProjected.line3,0.5*640.0,0.5*480.0,1)
+		    
+                triProjected.line1.x *= 0.5 * 640.0
+                triProjected.line1.y *= 0.5 * 480.0
+                triProjected.line2.x *= 0.5 * 640.0
+                triProjected.line2.y *= 0.5 * 480.0
+                triProjected.line3.x *= 0.5 * 640.0
+                triProjected.line3.y *= 0.5 * 480.0
 
 		# Rasterize triangle
+                #pygame.draw.polygon(screen,(0, 0, 255),[(triProjected.line1.x, triProjected.line1.y), (triProjected.line2.x, triProjected.line2.y), (triProjected.line3.x, triProjected.line3.y)],True)
+                
+                
+                #if dotProductOflight<0 :
+                #    dotProductOflight =0.001
+                #pygame.draw.polygon(screen,(0, 0, 255*dotProductOflight),[(triProjected.line1.x, triProjected.line1.y), (triProjected.line2.x, triProjected.line2.y), (triProjected.line3.x, triProjected.line3.y)],0)
                 if dotProductOflight<0 :
                     dotProductOflight =0.001
                 
@@ -459,12 +458,17 @@ def Update(elapsedTime):
                 listTriangleProjected.append([triProjected,dotProductOflight])
         
     sortedListofTriangleProjected = Sort(listTriangleProjected)
-
+#print("===========9============")
     listTriangleProjected = []
     for trianglesSorted, dotProductOflightSorted in sortedListofTriangleProjected:
+        #print("============10===========")
+        #print(trianglesSorted.line1.x)
+#print(trianglesSorted.line1.y)
+#print(dotProductOflightSorted)
         pygame.draw.polygon(screen,(0, 0, 255*dotProductOflightSorted),[(trianglesSorted.line1.x, trianglesSorted.line1.y), (trianglesSorted.line2.x, trianglesSorted.line2.y), (trianglesSorted.line3.x, trianglesSorted.line3.y)],0)
 
 
+		#input("Press Enter to continue...")
 
 import time
 while running:
@@ -472,7 +476,10 @@ while running:
     if event.type == pygame.QUIT:
         running = 0
     screen.fill((0, 0, 0))
-#time.sleep(0.001)
+#pygame.draw.line(screen, (0, 0, 255), (0, 0), (639, 479))
+#pygame.draw.line(screen, (0, 0, 255), (639, 0), (0, 479))
+#time.sleep(0.01)
     Update(0.1)
     pygame.display.flip()
+
 
