@@ -13,7 +13,7 @@ matrix_rotateZ = np.array([[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0],[0.0, 0.0, 
 matrix_rotateX = np.array([[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0],[0.0, 0.0, 1.0, 0.0],[0.0, 0.0, 0.0, 1.0]])
 matrix_camera = np.array([[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0],[0.0, 0.0, 1.0, 0.0],[0.0, 0.0, 0.0, 1.0]])
 matrix_view = np.array([[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0],[0.0, 0.0, 1.0, 0.0],[0.0, 0.0, 0.0, 1.0]])
-
+matrix_I = np.array([[1.0, 0.0, 0.0, 0.0],[0.0, 1.0, 0.0, 0.0],[0.0, 0.0, 1.0, 0.0],[0.0, 0.0, 0.0, 1.0]])
 
 def multiplayMatrixVector(inputV,matrix4x4):
     outputV = vector3d(0,0,0)
@@ -97,7 +97,7 @@ def make_mesh_from_file(strings):
     return meshCube
 
 
-meshCubetest = make_mesh_from_file("teapot.obj")
+meshCubetest = make_mesh_from_file("mountain.obj")
 
 
 
@@ -176,7 +176,7 @@ meshCube2.append(topTriangle2)
 meshCube2.append(bottomTriangle1)
 meshCube2.append(bottomTriangle2)
 
-meshCube = meshCube1 + meshCube2 + meshCube3 + meshCube4#+ meshCubetest
+meshCube = meshCube1 + meshCube2 + meshCube3 + meshCube4 + meshCubetest
 
 import math
 #project matrix
@@ -211,6 +211,17 @@ def matirx_rotate_Z(theta):
     matrix_rotateZ[3][3] = 1
 
     return matrix_rotateZ
+
+def matirx_rotate_Y(theta):
+    
+    matrix_rotateX[0][0] = math.cos( theta * 0.5 )
+    matrix_rotateX[1][1] = 1
+    matrix_rotateX[2][0] = math.sin( theta * 0.5 )
+    matrix_rotateX[0][2] = -1 * math.sin( theta * 0.5 )
+    matrix_rotateX[2][2] = math.cos( theta * 0.5 )
+    matrix_rotateX[3][3] = 1
+    
+    return matrix_rotateX
 
 def matirx_rotate_X(theta):
     
@@ -357,10 +368,12 @@ def matrix_quike_inverse(m):
 
 vectorCamera = vector3d(0.0, 0.0,0.0)
 vectorLookDirection = vector3d(0.0,0.0,1.0)
+fYaw = 0
 def Update(elapsedTime):
     
     global vectorLookDirection
     global vectorCamera
+    global fYaw
     vForward = multiply_each_vector_by_number(vectorLookDirection, 8.0 * elapsedTime,8.0 * elapsedTime,8.0 * elapsedTime);
     
     for event in pygame.event.get():
@@ -385,23 +398,26 @@ def Update(elapsedTime):
                     
             if(event.key == pygame.K_a):
                 print("---5---")
-                vectorCamera = vector_add_vector(vectorCamera,vForward)
+                fYaw -= 2.0 * elapsedTime
+
             if(event.key == pygame.K_d):
                 print("---6---")
-                vectorCamera = vector_minus_vector(vectorCamera,vForward)
+                fYaw += 2.0 * elapsedTime
 
             if(event.key == pygame.K_w):
                 print("---7---")
-                vectorCamera.y -= 8.0 * elapsedTime
+                vectorCamera = vector_add_vector(vectorCamera,vForward)
             if(event.key == pygame.K_s):
                 print("---8---")
-                vectorCamera.y += 8.0 * elapsedTime
+                vectorCamera = vector_minus_vector(vectorCamera,vForward)
                     
                     
     global theta
     theta += 0.1 * elapsedTime
+    theta = 0
 
     Matirx_Rotate_X = matirx_rotate_X(theta)
+
     Matirx_Rotate_Z = matirx_rotate_Z(theta)
     
     for triangles in meshCube:
@@ -426,7 +442,7 @@ def Update(elapsedTime):
         #print(triRotatedZX.line1.x)
         
         # Offset into the screen
-        triTranslated = add_each_vector_by_number(triRotatedZX,10,10,10)
+        triTranslated = add_each_vector_by_number(triRotatedZX,100,100,100)
         
         normal = vector3d(0.1, 0.1,0.1)
         vectorline1 = vector3d(0.1, 0.1,0.1)
@@ -444,7 +460,12 @@ def Update(elapsedTime):
         #vectorLookDirection = multiply_each_vector_by_number(vectorLookDirection,-1,-1,-1)
         
         vectorUp = vector3d(0.0,1.0,0.0)
-        vectorTarget = vector_minus_vector(vectorCamera,vectorLookDirection)
+        vectorTarget = vector3d(0.0,0.0,1.0)
+
+        Matirx_Rotate_Y = matirx_rotate_Y(fYaw)
+        vectorLookDirection = multiplayMatrixVector(vectorTarget, Matirx_Rotate_Y)
+
+        vectorTarget = vector_add_vector(vectorCamera,vectorLookDirection)
         
         matrix_camera = matrix_point_at(vectorCamera,vectorTarget,vectorUp)
         
@@ -509,4 +530,4 @@ while running:
 #time.sleep(0.001)
     Update(0.1)
 #pygame.display.flip()
-
+math.cos( theta * 0.5 )
