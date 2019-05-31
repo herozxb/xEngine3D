@@ -418,7 +418,7 @@ def Update(elapsedTime):
 
     Matirx_Rotate_X = matirx_rotate_X(theta)
 
-    Matirx_Rotate_Z = matirx_rotate_Z(theta)
+    Matirx_Rotate_Z = matirx_rotate_Z(180/180*3.1415926)
     
     for triangles in meshCube:
  
