@@ -97,7 +97,7 @@ def make_mesh_from_file(strings):
     return meshCube
 
 
-meshCubetest = make_mesh_from_file("mountain.obj")
+meshCubetest = make_mesh_from_file("3dObject/mountain.obj")
 
 
 
