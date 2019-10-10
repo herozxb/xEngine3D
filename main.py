@@ -828,6 +828,7 @@ def Update(elapsedTime):
 
 
 import time
+clock = pygame.time.Clock()
 while running:
     #event = pygame.event.poll()
     #if event.type == pygame.QUIT:
@@ -835,5 +836,8 @@ while running:
     screen.fill((0, 0, 0))
 #time.sleep(0.001)
     Update(0.1)
+    clock.tick()
+    fps = clock.get_fps()
+    print("fps = ", fps)
 #pygame.display.flip()
 math.cos( theta * 0.5 )
