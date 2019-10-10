@@ -2,6 +2,7 @@
 import math
 import pygame
 import numpy as np
+from math import isnan
 
 screen = pygame.display.set_mode((640, 480),pygame.HWSURFACE|pygame.DOUBLEBUF)
 running = 1
@@ -98,7 +99,7 @@ def make_mesh_from_file(strings):
     return meshCube
 
 
-meshCubetest = make_mesh_from_file("3dObject/mountain.obj")
+meshCubeinput = make_mesh_from_file("3dObject/mountain.obj")
 
 
 
@@ -177,8 +178,8 @@ meshCube2.append(topTriangle2)
 meshCube2.append(bottomTriangle1)
 meshCube2.append(bottomTriangle2)
 
-meshCube = meshCube1 + meshCube2 + meshCube3 + meshCube4 + meshCubetest
-
+#meshCube = meshCube1 + meshCube2 + meshCube3 + meshCube4 + meshCubetest
+meshCube = meshCubeinput
 
 #project matrix
 fNear = 0.1
@@ -382,12 +383,18 @@ def line_intersect_plane( plane_point, plane_normal, line_start, line_end ):
     return vector_add_vector( line_start, line_to_intersect )
 
 
-def calculate_distance_from_point_to_plane( point, plane_normal ):
+def calculate_distance_from_point_to_plane( point, plane_normal, plane_point ):
 
     plane_normal = vector_normal_make(plane_normal) 
 
-    return plane_normal.x * point.x + plane_normal.y * point.y + plane_normal.z * point.z - vector_dotProduct( plane_normal, point )
+    #print("=========3.1============")
+    #print(point.x, point.y, point.z)
+    #print(plane_normal.x, plane_normal.y, plane_normal.z)
 
+    result = plane_normal.x * point.x + plane_normal.y * point.y + plane_normal.z * point.z - vector_dotProduct( plane_normal, plane_point )
+    #print(result)
+
+    return result
 
 def triangle_clip_against_plane( plane_point, plane_normal, traingle_put_in ):
 
@@ -398,10 +405,25 @@ def triangle_clip_against_plane( plane_point, plane_normal, traingle_put_in ):
     outside_points = []
     counter_of_outside_points = 0
 
+    traingle_put_out_1 = makeTriangle(0,0,0,0,0,0,0,0,0)
+    traingle_put_out_2 = makeTriangle(0,0,0,0,0,0,0,0,0)
 
-    distance_0 = calculate_distance_from_point_to_plane( traingle_put_in.line1, plane_normal )
-    distance_1 = calculate_distance_from_point_to_plane( traingle_put_in.line2, plane_normal )
-    distance_2 = calculate_distance_from_point_to_plane( traingle_put_in.line3, plane_normal )
+    #print("=========3.0============")
+    #print(plane_point.x, plane_point.y, plane_point.z)
+    #print(plane_normal.x, plane_normal.y, plane_normal.z)
+    #print(traingle_put_in.line1.x, traingle_put_in.line1.y, traingle_put_in.line1.z)
+    #print(traingle_put_in.line2.x, traingle_put_in.line2.y, traingle_put_in.line2.z)
+    #print(traingle_put_in.line3.x, traingle_put_in.line3.y, traingle_put_in.line3.z)
+
+    distance_0 = calculate_distance_from_point_to_plane( traingle_put_in.line1, plane_normal ,plane_point )
+    distance_1 = calculate_distance_from_point_to_plane( traingle_put_in.line2, plane_normal ,plane_point )
+    distance_2 = calculate_distance_from_point_to_plane( traingle_put_in.line3, plane_normal ,plane_point )
+
+    #print("=========2.0 distance is ============")
+    #print(distance_0)
+    #print(distance_1)
+    #print(distance_2)
+
 
     if distance_0 >= 0:
         inside_points.append(traingle_put_in.line1)
@@ -412,32 +434,33 @@ def triangle_clip_against_plane( plane_point, plane_normal, traingle_put_in ):
 
 
     if distance_1 >= 0:
-        inside_points.append(traingle_put_in.line1)
+        inside_points.append(traingle_put_in.line2)
         counter_of_inside_points = counter_of_inside_points + 1
     else:
-        outside_points.append(traingle_put_in.line1)
+        outside_points.append(traingle_put_in.line2)
         counter_of_outside_points = counter_of_outside_points + 1
 
 
     if distance_2 >= 0:
-        inside_points.append(traingle_put_in.line1)
+        inside_points.append(traingle_put_in.line3)
         counter_of_inside_points = counter_of_inside_points + 1
     else:
-        outside_points.append(traingle_put_in.line1)
+        outside_points.append(traingle_put_in.line3)
         counter_of_outside_points = counter_of_outside_points + 1
 
 
     if counter_of_inside_points == 0:
+        #print("no inside points")
         return [ 0, None, None] 
 
     if counter_of_inside_points == 3:
 
         traingle_put_out_1 = traingle_put_in
-
+        #print("all points inside")
         return [ 1, traingle_put_in, None] 
 
     if counter_of_inside_points == 1 and counter_of_outside_points == 2 :
-
+        #print("1 points inside")
         traingle_put_out_1.line1 = inside_points[0]
         traingle_put_out_1.line2 = line_intersect_plane( plane_point, plane_normal, inside_points[0], outside_points[0] ) 
         traingle_put_out_1.line3 = line_intersect_plane( plane_point, plane_normal, inside_points[0], outside_points[1] ) 
@@ -446,19 +469,26 @@ def triangle_clip_against_plane( plane_point, plane_normal, traingle_put_in ):
 
 
     if counter_of_inside_points == 2 and counter_of_outside_points == 1 :
-
+        #print("2 points inside")
         traingle_put_out_1.line1 = inside_points[0]
         traingle_put_out_1.line2 = inside_points[1]
+
+        #print(inside_points[0].x,inside_points[0].y,inside_points[0].z)
+        #print(inside_points[1].x,inside_points[1].y,inside_points[1].z)
+        #print("----------------------------------------------------------")
+        #print(outside_points[0].x,outside_points[0].y,outside_points[0].z)
+        #print(outside_points[1].x,outside_points[1].y,outside_points[1].z)
+
         traingle_put_out_1.line3 = line_intersect_plane( plane_point, plane_normal, inside_points[0], outside_points[0] ) 
 
-        traingle_put_out_2.line1 = inside_points[0]
+        traingle_put_out_2.line1 = inside_points[1]
         traingle_put_out_2.line2 = traingle_put_out_1.line3
         traingle_put_out_2.line3 = line_intersect_plane( plane_point, plane_normal, inside_points[1], outside_points[0] ) 
 
         return [ 2, traingle_put_out_1, traingle_put_out_2 ] 
 
 
-    return true
+    return False
 
 
 
@@ -540,7 +570,7 @@ def Update(elapsedTime):
         triRotatedZX.line3 = multiplayMatrixVector(triRotatedZ.line3,Matirx_Rotate_X)
         
         # Offset into the screen
-        triTranslated = add_each_vector_by_number(triRotatedZX,100,100,100)
+        triTranslated = add_each_vector_by_number(triRotatedZX,10,10,10)
         
         normal = vector3d(0.1, 0.1,0.1)
         vectorline1 = vector3d(0.1, 0.1,0.1)
@@ -591,34 +621,86 @@ def Update(elapsedTime):
                 clipped_triangle = []
                 clip_result = triangle_clip_against_plane( vector3d( 0.0, 0.0, 0.1 ), vector3d( 0.0, 0.0, 1.0 ), triViewed )
 
+                if clip_result == False:
+                    print("wrong!")
 
-        
-		        #Project triangles from 3D --> 2D        
-                triProjected.line1 = multiplayMatrixVector(triViewed.line1,matrix4x4Projection)
-                triProjected.line2 = multiplayMatrixVector(triViewed.line2,matrix4x4Projection)
-                triProjected.line3 = multiplayMatrixVector(triViewed.line3,matrix4x4Projection)
+                number_clipped_triangle = clip_result[0]
 
-                triProjected.line1.x += 1.0
-                triProjected.line1.y += 1.0
-                triProjected.line2.x += 1.0
-                triProjected.line2.y += 1.0
-                triProjected.line3.x += 1.0
-                triProjected.line3.y += 1.0
-                multiply_each_vector_by_number(triProjected.line1,0.5*640.0,0.5*480.0,1)
-                multiply_each_vector_by_number(triProjected.line2,0.5*640.0,0.5*480.0,1)
-                multiply_each_vector_by_number(triProjected.line3,0.5*640.0,0.5*480.0,1)
+                #print("============1.0============")
+                #print(number_clipped_triangle)
 
-		# Rasterize triangle
-                if dotProductOflight<0 :
-                    dotProductOflight =0.001
-                
-                global listTriangleProjected
-                listTriangleProjected.append([triProjected,dotProductOflight])
+                if clip_result[1] is not None:
+                    #print("============1.0.1============")
+                    clipped_triangle.append(clip_result[1])
+                    #print(clipped_triangle[0].line1.x,clipped_triangle[0].line1.y,clipped_triangle[0].line1.z)
+                    #print(clipped_triangle[0].line2.x,clipped_triangle[0].line2.y,clipped_triangle[0].line2.z)
+                    #print(clipped_triangle[0].line3.x,clipped_triangle[0].line3.y,clipped_triangle[0].line3.z)
+                    if clip_result[2] is not None:
+                        #print("============1.0.2============")
+                        clipped_triangle.append(clip_result[2])
+                        #print(clipped_triangle[1].line1.x,clipped_triangle[1].line1.y,clipped_triangle[1].line1.z)
+                        #print(clipped_triangle[1].line2.x,clipped_triangle[1].line2.y,clipped_triangle[1].line2.z)
+                        #print(clipped_triangle[1].line3.x,clipped_triangle[1].line3.y,clipped_triangle[1].line3.z)
+
+
+
+
+
+                for i in range(number_clipped_triangle):
+                    #print("============1.1============")            
+                    #Project triangles from 3D --> 2D  
+                    #print(clipped_triangle[i].line1.x,clipped_triangle[i].line1.y,clipped_triangle[i].line1.z)
+                    #print(clipped_triangle[i].line2.x,clipped_triangle[i].line2.y,clipped_triangle[i].line2.z)
+                    #print(clipped_triangle[i].line3.x,clipped_triangle[i].line3.y,clipped_triangle[i].line3.z)
+
+
+                    triProjected.line1 = multiplayMatrixVector(clipped_triangle[i].line1,matrix4x4Projection)
+                    triProjected.line2 = multiplayMatrixVector(clipped_triangle[i].line2,matrix4x4Projection)
+                    triProjected.line3 = multiplayMatrixVector(clipped_triangle[i].line3,matrix4x4Projection)
+
+
+                    #print("=========1.2.0 triProjected is ============")
+                    #print(triProjected.line1.x,triProjected.line1.y,triProjected.line1.z)
+                    #print(triProjected.line2.x,triProjected.line2.y,triProjected.line2.z)
+                    #print(triProjected.line3.x,triProjected.line3.y,triProjected.line3.z)
+
+
+
+                    #print("============1.3============")  
+                    triProjected.line1.x += 1.0
+                    triProjected.line1.y += 1.0
+                    triProjected.line2.x += 1.0
+                    triProjected.line2.y += 1.0
+                    triProjected.line3.x += 1.0
+                    triProjected.line3.y += 1.0
+                    multiply_each_vector_by_number(triProjected.line1,0.5*640.0,0.5*480.0,1)
+                    multiply_each_vector_by_number(triProjected.line2,0.5*640.0,0.5*480.0,1)
+                    multiply_each_vector_by_number(triProjected.line3,0.5*640.0,0.5*480.0,1)
+                    #print("============1.4============") 
+            # Rasterize triangle
+                    if dotProductOflight<0 :
+                        dotProductOflight =0.001
+                    #print("============1.5============") 
+
+                    #if isnan(triProjected.line2.x):
+                        #print("=============Nan number of vector================")
+                        #exit(0)
+                    global listTriangleProjected
+                    listTriangleProjected.append([triProjected,dotProductOflight])
         
     sortedListofTriangleProjected = Sort(listTriangleProjected)
 
     listTriangleProjected = []
     for trianglesSorted, dotProductOflightSorted in sortedListofTriangleProjected:
+
+
+        #print("=========2.1.0 trianglesSorted is ============")
+        #print(trianglesSorted.line1.x,trianglesSorted.line1.y,trianglesSorted.line1.z)
+        #print(trianglesSorted.line2.x,trianglesSorted.line2.y,trianglesSorted.line2.z)
+        #print(trianglesSorted.line3.x,trianglesSorted.line3.y,trianglesSorted.line3.z)
+
+
+
         pygame.draw.polygon(screen,(0, 0, 255*dotProductOflightSorted),[(trianglesSorted.line1.x, trianglesSorted.line1.y), (trianglesSorted.line2.x, trianglesSorted.line2.y), (trianglesSorted.line3.x, trianglesSorted.line3.y)],0)
 
     pygame.display.flip()
