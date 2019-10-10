@@ -528,10 +528,10 @@ def Update(elapsedTime):
 
             if(event.key == pygame.K_UP):
                 print("---up---")
-                vectorCamera.y += 8.0 * elapsedTime
+                vectorCamera.y -= 8.0 * elapsedTime
             if(event.key == pygame.K_DOWN):
                 print("---down---")
-                vectorCamera.y -= 8.0 * elapsedTime
+                vectorCamera.y += 8.0 * elapsedTime
                     
                     
             if(event.key == pygame.K_a):
