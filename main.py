@@ -179,6 +179,7 @@ meshCube2.append(bottomTriangle1)
 meshCube2.append(bottomTriangle2)
 
 #meshCube = meshCube1 + meshCube2 + meshCube3 + meshCube4 + meshCubetest
+#meshCube = meshCubeinput
 meshCube = meshCubeinput
 
 #project matrix
@@ -374,8 +375,13 @@ def line_intersect_plane( plane_point, plane_normal, line_start, line_end ):
 
     plane_normal      = vector_normal_make(plane_normal)
     plane_distance    = -1 *  vector_dotProduct( plane_normal, plane_point )
-    a_distance        = vector_dotProduct( line_start, plane_point )
-    b_distance        = vector_dotProduct( line_end, plane_point )
+    a_distance        = vector_dotProduct( line_start, plane_normal )
+    #print("plane_point",plane_point.x, plane_point.y, plane_point.z)
+    #print("line_start",line_start.x, line_start.y, line_start.z)
+    #print("a_distance",a_distance)
+    b_distance        = vector_dotProduct( line_end, plane_normal )
+    #print("line_end",line_end.x, line_end.y, line_end.z)
+    #print("b_distance",b_distance)
     t                 = ( -1 * plane_distance - a_distance ) / ( b_distance - a_distance )
     line_start_to_end = vector_minus_vector( line_end, line_start ) 
     line_to_intersect = multiply_each_vector_by_number( line_start_to_end, t, t, t )  
@@ -479,7 +485,8 @@ def triangle_clip_against_plane( plane_point, plane_normal, traingle_put_in ):
         #print(outside_points[0].x,outside_points[0].y,outside_points[0].z)
         #print(outside_points[1].x,outside_points[1].y,outside_points[1].z)
 
-        traingle_put_out_1.line3 = line_intersect_plane( plane_point, plane_normal, inside_points[0], outside_points[0] ) 
+        traingle_put_out_1.line3 = line_intersect_plane( plane_point, plane_normal, inside_points[0], outside_points[0] )
+        #print("in function : ",traingle_put_out_1.line3.x,traingle_put_out_1.line3.y,traingle_put_out_1.line3.z)
 
         traingle_put_out_2.line1 = inside_points[1]
         traingle_put_out_2.line2 = traingle_put_out_1.line3
@@ -691,17 +698,131 @@ def Update(elapsedTime):
     sortedListofTriangleProjected = Sort(listTriangleProjected)
 
     listTriangleProjected = []
+    
+    '''
     for trianglesSorted, dotProductOflightSorted in sortedListofTriangleProjected:
-
-
-        #print("=========2.1.0 trianglesSorted is ============")
-        #print(trianglesSorted.line1.x,trianglesSorted.line1.y,trianglesSorted.line1.z)
-        #print(trianglesSorted.line2.x,trianglesSorted.line2.y,trianglesSorted.line2.z)
-        #print(trianglesSorted.line3.x,trianglesSorted.line3.y,trianglesSorted.line3.z)
-
-
-
         pygame.draw.polygon(screen,(0, 0, 255*dotProductOflightSorted),[(trianglesSorted.line1.x, trianglesSorted.line1.y), (trianglesSorted.line2.x, trianglesSorted.line2.y), (trianglesSorted.line3.x, trianglesSorted.line3.y)],0)
+    pygame.display.flip()
+
+    '''
+    for trianglesSorted, dotProductOflightSorted in sortedListofTriangleProjected:
+        clipped_1 = makeTriangle(0,0,0,0,0,0,0,0,0)
+        clipped_2 = makeTriangle(0,0,0,0,0,0,0,0,0)
+        
+        triangle_to_draw = []
+        triangle_to_draw.append( [trianglesSorted,dotProductOflightSorted] )
+        #print("[dotProductOflight] = ", dotProductOflightSorted)
+        new_triangles = 1
+        
+        for p in range(4):
+            number_triangle_to_add = 0
+            
+            while new_triangles > 0 :
+                test = triangle_to_draw.pop(0)
+                test = test[0]
+                #print("=========1.2.0 triProjected is popped ============")
+                #print(test.line1.x,test.line1.y,test.line1.z)
+                #print(test.line2.x,test.line2.y,test.line2.z)
+                #print(test.line3.x,test.line3.y,test.line3.z)
+                
+                if isnan(test.line3.x):
+                    print("=============Nan number of vector================")
+                    exit(0)
+                
+                new_triangles = new_triangles - 1
+                #print("new_triangles:" + str(new_triangles))
+                
+                if p == 0:
+                    #print("p = " + str(p))
+                    clip_result = triangle_clip_against_plane( vector3d( 0.0, 0.0, 0.0 ), vector3d( 0.0, 1.0, 0.0 ), test )
+                    number_triangle_to_add = clip_result[0]
+                    #print("number_triangle_to_add", number_triangle_to_add)
+                    clipped_1              = clip_result[1]
+                    #print("clipped_1",clipped_1)
+                    #if clipped_1 is not None:
+                        #print(clipped_1.line1.x,clipped_1.line1.y,clipped_1.line1.z)
+                        #print(clipped_1.line2.x,clipped_1.line2.y,clipped_1.line2.z)
+                        #print(clipped_1.line3.x,clipped_1.line3.y,clipped_1.line3.z)
+                    clipped_2              = clip_result[2]
+                    #print("clipped_2",clipped_2)
+                    #if clipped_2 is not None:
+                        #print(clipped_2.line1.x,clipped_2.line1.y,clipped_2.line1.z)
+                        #print(clipped_2.line2.x,clipped_2.line2.y,clipped_2.line2.z)
+                        #print(clipped_2.line3.x,clipped_2.line3.y,clipped_2.line3.z)
+                        
+                if p == 1:
+                    #print("p = " + str(p))
+                    clip_result = triangle_clip_against_plane( vector3d( 0.0, 480.0 - 1, 0.0 ), vector3d( 0.0, -1.0, 0.0 ), test )
+                    number_triangle_to_add = clip_result[0]
+                    #print("number_triangle_to_add", number_triangle_to_add)
+                    clipped_1              = clip_result[1]
+                    #print("clipped_1",clipped_1)
+                    #if clipped_1 is not None:
+                        #print(clipped_1.line1.x,clipped_1.line1.y,clipped_1.line1.z)
+                        #print(clipped_1.line2.x,clipped_1.line2.y,clipped_1.line2.z)
+                        #print(clipped_1.line3.x,clipped_1.line3.y,clipped_1.line3.z)
+                    clipped_2              = clip_result[2]
+                    #print("clipped_2",clipped_2)
+                    #if clipped_2 is not None:
+                        #print(clipped_2.line1.x,clipped_2.line1.y,clipped_2.line1.z)
+                        #print(clipped_2.line2.x,clipped_2.line2.y,clipped_2.line2.z)
+                        #print(clipped_2.line3.x,clipped_2.line3.y,clipped_2.line3.z)
+
+                if p == 2:
+                    #print("p = " + str(p))
+                    clip_result = triangle_clip_against_plane( vector3d( 0.0, 0.0, 0.0 ), vector3d( 1.0, 0.0, 0.0 ), test )
+                    number_triangle_to_add = clip_result[0]
+                    #print("number_triangle_to_add", number_triangle_to_add)
+                    clipped_1              = clip_result[1]
+                    #print("clipped_1",clipped_1)
+                    #if clipped_1 is not None:
+                        #print(clipped_1.line1.x,clipped_1.line1.y,clipped_1.line1.z)
+                        #print(clipped_1.line2.x,clipped_1.line2.y,clipped_1.line2.z)
+                        #print(clipped_1.line3.x,clipped_1.line3.y,clipped_1.line3.z)
+                    clipped_2              = clip_result[2]
+                    #print("clipped_2",clipped_2)
+                    #if clipped_2 is not None:
+                        #print(clipped_2.line1.x,clipped_2.line1.y,clipped_2.line1.z)
+                        #print(clipped_2.line2.x,clipped_2.line2.y,clipped_2.line2.z)
+                        #print(clipped_2.line3.x,clipped_2.line3.y,clipped_2.line3.z)
+
+                if p == 3:
+                    #print("p = " + str(p))
+                    clip_result = triangle_clip_against_plane( vector3d( 640.0 - 1 , 0.0, 0.0 ), vector3d( -1.0, 0.0, 0.0 ), test )
+                    number_triangle_to_add = clip_result[0]
+                    #print("number_triangle_to_add", number_triangle_to_add)
+                    clipped_1              = clip_result[1]
+                    #print("clipped_1",clipped_1)
+                    #if clipped_1 is not None:
+                        #print(clipped_1.line1.x,clipped_1.line1.y,clipped_1.line1.z)
+                        #print(clipped_1.line2.x,clipped_1.line2.y,clipped_1.line2.z)
+                        #print(clipped_1.line3.x,clipped_1.line3.y,clipped_1.line3.z)
+                    clipped_2              = clip_result[2]
+                    #print("clipped_2",clipped_2)
+                    #if clipped_2 is not None:
+                        #print(clipped_2.line1.x,clipped_2.line1.y,clipped_2.line1.z)
+                        #print(clipped_2.line2.x,clipped_2.line2.y,clipped_2.line2.z)
+                        #print(clipped_2.line3.x,clipped_2.line3.y,clipped_2.line3.z)
+
+                #print("number_triangle_to_add : " + str(number_triangle_to_add))
+                #print("dotProductOflight = ", dotProductOflight)
+                for w in range(number_triangle_to_add):
+                    if w == 0 :
+                        triangle_to_draw.append([clipped_1,dotProductOflightSorted])
+                    #print( "w1 : " + str(w))
+                    if w == 1 :
+                        triangle_to_draw.append([clipped_2,dotProductOflightSorted])
+        #print( "w2 : " + str(w))
+                            
+            new_triangles = len(triangle_to_draw)
+                #print("new_triangles:" + str(new_triangles))
+
+
+                #print("length to draw = ", len(triangle_to_draw))
+        for triangles_sorted_to_draw, dotProductOflight_to_draw in triangle_to_draw:
+            #print("===2===")
+            #print("dotProductOflight_to_draw =" ,dotProductOflight_to_draw)
+            pygame.draw.polygon(screen,(0, 0, 255*dotProductOflight_to_draw),[(triangles_sorted_to_draw.line1.x, triangles_sorted_to_draw.line1.y), (triangles_sorted_to_draw.line2.x, triangles_sorted_to_draw.line2.y), (triangles_sorted_to_draw.line3.x, triangles_sorted_to_draw.line3.y)],0)
 
     pygame.display.flip()
 
