@@ -11,13 +11,12 @@ from functions import line_intersect_plane,calculate_distance_from_point_to_plan
 screen = pygame.display.set_mode((640, 480),pygame.HWSURFACE|pygame.DOUBLEBUF)
 running = 1
 
-x1 = vector3d(21, 20,19)
-x2 = vector3d(21, 20,19)
-x3 = vector3d(21, 20,19)
+x1 = vector3d( 1, 1, 1 )
+x2 = vector3d( 1, 1, 1 )
+x3 = vector3d( 1, 1, 1 )
 line1 = [x1,x2,x3]
 
 meshCube = mesh()
-meshCubetest = []
 meshCubeinput = make_mesh_from_file("3dObject/mountain.obj")
 
 pointlist = [ 0.0,0.0,0.0,0.0,1.0,0.0,1.0,1.0,0.0,
@@ -95,30 +94,12 @@ meshCube2.append(topTriangle2)
 meshCube2.append(bottomTriangle1)
 meshCube2.append(bottomTriangle2)
 
-#meshCube = meshCube1 + meshCube2 + meshCube3 + meshCube4 + meshCubetest
+#meshCube = meshCube1 + meshCube2 + meshCube3 + meshCube4 + meshCubeinput
 #meshCube = meshCubeinput
 meshCube = meshCubeinput
 
-#project matrix
-fNear = 0.1
-fFar = 1000.0
-fFov = 90.0
-fAspectRatio = 480.0 / 640.0
-fFovRad = 1.0 / math.tan( fFov * 0.5 / 180.0 * 3.1415926 )
-
-matrix4x4Projection[0][0] = fAspectRatio * fFovRad
-matrix4x4Projection[1][1] = fFovRad
-matrix4x4Projection[2][2] = fFar / (fFar - fNear)
-matrix4x4Projection[3][2] =  (-fFar * fNear) / (fFar - fNear)
-matrix4x4Projection[2][3] = 1.0
-matrix4x4Projection[3][3] = 0.0
-
-
 theta = 0
 listTriangleProjected = []
-
-
-
 ###################################################### Program Start #########################################################################
 
 

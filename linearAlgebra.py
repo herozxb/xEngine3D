@@ -3,12 +3,28 @@ import math
 import numpy as np
 from objects import vector3d,triangle,mesh
 
+
+
 matrix4x4Projection = np.array( [ [1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0] ] )
 matrix_rotateZ      = np.array( [ [1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0] ] )
 matrix_rotateX      = np.array( [ [1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0] ] )
 matrix_camera       = np.array( [ [1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0] ] )
 matrix_view         = np.array( [ [1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0] ] )
 matrix_I            = np.array( [ [1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0] ] )
+
+#project matrix
+fNear = 0.1
+fFar = 1000.0
+fFov = 90.0
+fAspectRatio = 480.0 / 640.0
+fFovRad = 1.0 / math.tan( fFov * 0.5 / 180.0 * 3.1415926 )
+
+matrix4x4Projection[0][0] = fAspectRatio * fFovRad
+matrix4x4Projection[1][1] = fFovRad
+matrix4x4Projection[2][2] = fFar / (fFar - fNear)
+matrix4x4Projection[3][2] =  (-fFar * fNear) / (fFar - fNear)
+matrix4x4Projection[2][3] = 1.0
+matrix4x4Projection[3][3] = 0.0
 
 
 def multiplayMatrixVector(inputV,matrix4x4):
