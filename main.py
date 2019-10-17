@@ -188,12 +188,7 @@ def Update(elapsedTime):
 
         normal = vector_cross_product(vectorline1,vectorline2)
         normal = vector_normal_make(normal)
-        
 
-        
-        
-        #vectorLookDirection = multiply_each_vector_by_number(vectorLookDirection,-1,-1,-1)
-        
         vectorUp = vector3d(0.0,1.0,0.0)
         vectorTarget = vector3d(0.0,0.0,1.0)
 
@@ -219,7 +214,7 @@ def Update(elapsedTime):
 
                 dotProductOflight = vector_dotProduct(normal,lightdirection)
 
-				# Convert World Space      --> View Space
+				        # Convert World Space      --> View Space
                 triViewed.line1 = multiplayMatrixVector(triTranslated.line1,matrix_view)
                 triViewed.line2 = multiplayMatrixVector(triTranslated.line2,matrix_view)
                 triViewed.line3 = multiplayMatrixVector(triTranslated.line3,matrix_view)
@@ -232,48 +227,18 @@ def Update(elapsedTime):
                     print("wrong!")
 
                 number_clipped_triangle = clip_result[0]
-
-                #print("============1.0============")
-                #print(number_clipped_triangle)
-
                 if clip_result[1] is not None:
-                    #print("============1.0.1============")
                     clipped_triangle.append(clip_result[1])
-                    #print(clipped_triangle[0].line1.x,clipped_triangle[0].line1.y,clipped_triangle[0].line1.z)
-                    #print(clipped_triangle[0].line2.x,clipped_triangle[0].line2.y,clipped_triangle[0].line2.z)
-                    #print(clipped_triangle[0].line3.x,clipped_triangle[0].line3.y,clipped_triangle[0].line3.z)
+
                     if clip_result[2] is not None:
-                        #print("============1.0.2============")
                         clipped_triangle.append(clip_result[2])
-                        #print(clipped_triangle[1].line1.x,clipped_triangle[1].line1.y,clipped_triangle[1].line1.z)
-                        #print(clipped_triangle[1].line2.x,clipped_triangle[1].line2.y,clipped_triangle[1].line2.z)
-                        #print(clipped_triangle[1].line3.x,clipped_triangle[1].line3.y,clipped_triangle[1].line3.z)
-
-
-
-
-
-                for i in range(number_clipped_triangle):
-                    #print("============1.1============")            
+                        
+                for i in range(number_clipped_triangle): 
                     #Project triangles from 3D --> 2D  
-                    #print(clipped_triangle[i].line1.x,clipped_triangle[i].line1.y,clipped_triangle[i].line1.z)
-                    #print(clipped_triangle[i].line2.x,clipped_triangle[i].line2.y,clipped_triangle[i].line2.z)
-                    #print(clipped_triangle[i].line3.x,clipped_triangle[i].line3.y,clipped_triangle[i].line3.z)
-
-
                     triProjected.line1 = multiplayMatrixVector(clipped_triangle[i].line1,matrix4x4Projection)
                     triProjected.line2 = multiplayMatrixVector(clipped_triangle[i].line2,matrix4x4Projection)
                     triProjected.line3 = multiplayMatrixVector(clipped_triangle[i].line3,matrix4x4Projection)
 
-
-                    #print("=========1.2.0 triProjected is ============")
-                    #print(triProjected.line1.x,triProjected.line1.y,triProjected.line1.z)
-                    #print(triProjected.line2.x,triProjected.line2.y,triProjected.line2.z)
-                    #print(triProjected.line3.x,triProjected.line3.y,triProjected.line3.z)
-
-
-
-                    #print("============1.3============")  
                     triProjected.line1.x += 1.0
                     triProjected.line1.y += 1.0
                     triProjected.line2.x += 1.0
@@ -283,35 +248,23 @@ def Update(elapsedTime):
                     multiply_each_vector_by_number(triProjected.line1,0.5*640.0,0.5*480.0,1)
                     multiply_each_vector_by_number(triProjected.line2,0.5*640.0,0.5*480.0,1)
                     multiply_each_vector_by_number(triProjected.line3,0.5*640.0,0.5*480.0,1)
-                    #print("============1.4============") 
-            # Rasterize triangle
+                    # Rasterize triangle
                     if dotProductOflight<0 :
                         dotProductOflight =0.001
-                    #print("============1.5============") 
-
-                    #if isnan(triProjected.line2.x):
-                        #print("=============Nan number of vector================")
-                        #exit(0)
                     global listTriangleProjected
+                    
                     listTriangleProjected.append([triProjected,dotProductOflight])
         
     sortedListofTriangleProjected = Sort(listTriangleProjected)
 
     listTriangleProjected = []
-    
-    '''
-    for trianglesSorted, dotProductOflightSorted in sortedListofTriangleProjected:
-        pygame.draw.polygon(screen,(0, 0, 255*dotProductOflightSorted),[(trianglesSorted.line1.x, trianglesSorted.line1.y), (trianglesSorted.line2.x, trianglesSorted.line2.y), (trianglesSorted.line3.x, trianglesSorted.line3.y)],0)
-    pygame.display.flip()
 
-    '''
     for trianglesSorted, dotProductOflightSorted in sortedListofTriangleProjected:
         clipped_1 = makeTriangle(0,0,0,0,0,0,0,0,0)
         clipped_2 = makeTriangle(0,0,0,0,0,0,0,0,0)
         
         triangle_to_draw = []
         triangle_to_draw.append( [trianglesSorted,dotProductOflightSorted] )
-        #print("[dotProductOflight] = ", dotProductOflightSorted)
         new_triangles = 1
         
         for p in range(4):
@@ -320,108 +273,45 @@ def Update(elapsedTime):
             while new_triangles > 0 :
                 test = triangle_to_draw.pop(0)
                 test = test[0]
-                #print("=========1.2.0 triProjected is popped ============")
-                #print(test.line1.x,test.line1.y,test.line1.z)
-                #print(test.line2.x,test.line2.y,test.line2.z)
-                #print(test.line3.x,test.line3.y,test.line3.z)
                 
                 if isnan(test.line3.x):
                     print("=============Nan number of vector================")
                     exit(0)
                 
                 new_triangles = new_triangles - 1
-                #print("new_triangles:" + str(new_triangles))
-                
+          
                 if p == 0:
-                    #print("p = " + str(p))
                     clip_result = triangle_clip_against_plane( vector3d( 0.0, 0.0, 0.0 ), vector3d( 0.0, 1.0, 0.0 ), test )
                     number_triangle_to_add = clip_result[0]
-                    #print("number_triangle_to_add", number_triangle_to_add)
                     clipped_1              = clip_result[1]
-                    #print("clipped_1",clipped_1)
-                    #if clipped_1 is not None:
-                        #print(clipped_1.line1.x,clipped_1.line1.y,clipped_1.line1.z)
-                        #print(clipped_1.line2.x,clipped_1.line2.y,clipped_1.line2.z)
-                        #print(clipped_1.line3.x,clipped_1.line3.y,clipped_1.line3.z)
                     clipped_2              = clip_result[2]
-                    #print("clipped_2",clipped_2)
-                    #if clipped_2 is not None:
-                        #print(clipped_2.line1.x,clipped_2.line1.y,clipped_2.line1.z)
-                        #print(clipped_2.line2.x,clipped_2.line2.y,clipped_2.line2.z)
-                        #print(clipped_2.line3.x,clipped_2.line3.y,clipped_2.line3.z)
                         
                 if p == 1:
-                    #print("p = " + str(p))
                     clip_result = triangle_clip_against_plane( vector3d( 0.0, 480.0 - 1, 0.0 ), vector3d( 0.0, -1.0, 0.0 ), test )
                     number_triangle_to_add = clip_result[0]
-                    #print("number_triangle_to_add", number_triangle_to_add)
                     clipped_1              = clip_result[1]
-                    #print("clipped_1",clipped_1)
-                    #if clipped_1 is not None:
-                        #print(clipped_1.line1.x,clipped_1.line1.y,clipped_1.line1.z)
-                        #print(clipped_1.line2.x,clipped_1.line2.y,clipped_1.line2.z)
-                        #print(clipped_1.line3.x,clipped_1.line3.y,clipped_1.line3.z)
                     clipped_2              = clip_result[2]
-                    #print("clipped_2",clipped_2)
-                    #if clipped_2 is not None:
-                        #print(clipped_2.line1.x,clipped_2.line1.y,clipped_2.line1.z)
-                        #print(clipped_2.line2.x,clipped_2.line2.y,clipped_2.line2.z)
-                        #print(clipped_2.line3.x,clipped_2.line3.y,clipped_2.line3.z)
 
                 if p == 2:
-                    #print("p = " + str(p))
                     clip_result = triangle_clip_against_plane( vector3d( 0.0, 0.0, 0.0 ), vector3d( 1.0, 0.0, 0.0 ), test )
                     number_triangle_to_add = clip_result[0]
-                    #print("number_triangle_to_add", number_triangle_to_add)
                     clipped_1              = clip_result[1]
-                    #print("clipped_1",clipped_1)
-                    #if clipped_1 is not None:
-                        #print(clipped_1.line1.x,clipped_1.line1.y,clipped_1.line1.z)
-                        #print(clipped_1.line2.x,clipped_1.line2.y,clipped_1.line2.z)
-                        #print(clipped_1.line3.x,clipped_1.line3.y,clipped_1.line3.z)
                     clipped_2              = clip_result[2]
-                    #print("clipped_2",clipped_2)
-                    #if clipped_2 is not None:
-                        #print(clipped_2.line1.x,clipped_2.line1.y,clipped_2.line1.z)
-                        #print(clipped_2.line2.x,clipped_2.line2.y,clipped_2.line2.z)
-                        #print(clipped_2.line3.x,clipped_2.line3.y,clipped_2.line3.z)
 
                 if p == 3:
-                    #print("p = " + str(p))
                     clip_result = triangle_clip_against_plane( vector3d( 640.0 - 1 , 0.0, 0.0 ), vector3d( -1.0, 0.0, 0.0 ), test )
                     number_triangle_to_add = clip_result[0]
-                    #print("number_triangle_to_add", number_triangle_to_add)
                     clipped_1              = clip_result[1]
-                    #print("clipped_1",clipped_1)
-                    #if clipped_1 is not None:
-                        #print(clipped_1.line1.x,clipped_1.line1.y,clipped_1.line1.z)
-                        #print(clipped_1.line2.x,clipped_1.line2.y,clipped_1.line2.z)
-                        #print(clipped_1.line3.x,clipped_1.line3.y,clipped_1.line3.z)
                     clipped_2              = clip_result[2]
-                    #print("clipped_2",clipped_2)
-                    #if clipped_2 is not None:
-                        #print(clipped_2.line1.x,clipped_2.line1.y,clipped_2.line1.z)
-                        #print(clipped_2.line2.x,clipped_2.line2.y,clipped_2.line2.z)
-                        #print(clipped_2.line3.x,clipped_2.line3.y,clipped_2.line3.z)
-
-                #print("number_triangle_to_add : " + str(number_triangle_to_add))
-                #print("dotProductOflight = ", dotProductOflight)
                 for w in range(number_triangle_to_add):
                     if w == 0 :
                         triangle_to_draw.append([clipped_1,dotProductOflightSorted])
-                    #print( "w1 : " + str(w))
                     if w == 1 :
                         triangle_to_draw.append([clipped_2,dotProductOflightSorted])
-        #print( "w2 : " + str(w))
-                            
+
             new_triangles = len(triangle_to_draw)
-                #print("new_triangles:" + str(new_triangles))
-
-
-                #print("length to draw = ", len(triangle_to_draw))
+            
         for triangles_sorted_to_draw, dotProductOflight_to_draw in triangle_to_draw:
-            #print("===2===")
-            #print("dotProductOflight_to_draw =" ,dotProductOflight_to_draw)
             pygame.draw.polygon(screen,(0, 0, 255*dotProductOflight_to_draw),[(triangles_sorted_to_draw.line1.x, triangles_sorted_to_draw.line1.y), (triangles_sorted_to_draw.line2.x, triangles_sorted_to_draw.line2.y), (triangles_sorted_to_draw.line3.x, triangles_sorted_to_draw.line3.y)],0)
 
     pygame.display.flip()
@@ -430,14 +320,7 @@ def Update(elapsedTime):
 import time
 clock = pygame.time.Clock()
 while running:
-    #event = pygame.event.poll()
-    #if event.type == pygame.QUIT:
-    #    running = 0
     screen.fill((0, 0, 0))
-#time.sleep(0.001)
     Update(0.1)
     clock.tick()
     fps = clock.get_fps()
-    #print("fps = ", fps)
-#pygame.display.flip()
-#math.cos( theta * 0.5 )
