@@ -1,6 +1,4 @@
 #! /usr/bin/env python
-import math
-import numpy as np
 
 class vector3d(object):
     def __init__(self, x, y, z):

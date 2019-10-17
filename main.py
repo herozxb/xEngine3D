@@ -5,7 +5,7 @@ import numpy as np
 from math import isnan
 from objects import vector3d,triangle,mesh
 from linearAlgebra import matrix4x4Projection,matrix_rotateZ,matrix_rotateX,matrix_camera,matrix_view,matrix_I,multiplayMatrixVector,makeTriangle,make_mesh_from_file,Sort,matirx_rotate_X,matirx_rotate_Y,matirx_rotate_Z,add_each_vector_by_number,multiply_each_vector_by_number,vector_minus_vector,vector_add_vector,vector_cross_product,vector_normal_make,vector_dotProduct,matrix_point_at,matrix_quike_inverse
-from functions import line_intersect_plane,calculate_distance_from_point_to_plane,triangle_clip_against_plane
+from clipFunctions import line_intersect_plane,calculate_distance_from_point_to_plane,triangle_clip_against_plane
 
 
 screen = pygame.display.set_mode((640, 480),pygame.HWSURFACE|pygame.DOUBLEBUF)
